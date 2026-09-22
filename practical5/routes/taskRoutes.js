@@ -31,7 +31,7 @@ router.get('/error-test', (req, res, next) => {
   next(new Error('This is a simulated internal server error!'));
 });
 
-// 3. GET /tasks/:id - Get a task by its ID
+// 3. GET /tasks/:id - Get a task by its ID (returns 404 JSON response if task does not exist)
 router.get('/:id', validateTaskId, async (req, res, next) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -49,12 +49,13 @@ router.get('/:id', validateTaskId, async (req, res, next) => {
 // 4. POST /tasks - Create a new task in MongoDB
 router.post('/', validateTask, async (req, res, next) => {
   try {
-    const { title, description, completed } = req.body;
+    const { title, description, completed, priority } = req.body;
 
     const newTask = await Task.create({
       title,
       description,
-      completed
+      completed,
+      priority
     });
 
     res.status(201).json(newTask);
@@ -69,11 +70,18 @@ router.post('/', validateTask, async (req, res, next) => {
 // 5. PUT /tasks/:id - Update an existing task in MongoDB
 router.put('/:id', validateTaskId, validateTask, async (req, res, next) => {
   try {
-    const { title, description, completed } = req.body;
+    const { title, description, completed, priority } = req.body;
+
+    const updateData = {
+      title: typeof title === 'string' ? title.trim() : title,
+      description,
+      completed,
+      priority
+    };
 
     const updatedTask = await Task.findByIdAndUpdate(
       req.params.id,
-      { title, description, completed },
+      updateData,
       { new: true, runValidators: true }
     );
 
