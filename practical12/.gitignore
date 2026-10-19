@@ -18,6 +18,10 @@ coverage/
 .nyc_output/
 **/.nyc_output/
 
+# Linter cache
+.eslintcache
+**/.eslintcache
+
 # Environment files (exclude secret keys, allow example templates)
 .env
 **/.env
