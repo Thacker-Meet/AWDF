@@ -8,6 +8,9 @@ dist-ssr/
 coverage/
 .nyc_output/
 
+# Linter cache
+.eslintcache
+
 # Logs
 *.log
 npm-debug.log*

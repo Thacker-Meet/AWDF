@@ -1,15 +1,33 @@
 name: Full Stack CI
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
+  # Job 1: Run Linter before testing
+  lint:
+    name: Code Quality & Linting (ESLint)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run ESLint Check
+        run: |
+          npx --yes eslint@8.57.0 backend/server.js backend/middleware/*.js backend/routes/*.js backend/models/*.js backend/events/*.js frontend/src/App.jsx --no-error-on-unmatched-pattern
+
+  # Job 2: Build and Test (executed after lint job completes successfully)
   build-and-test:
     name: Build and Test Full-Stack Application
     runs-on: ubuntu-latest
+    needs: lint
 
     steps:
       # 1. Check out repository source code
